@@ -1,0 +1,4 @@
+Uses math;
+begin
+
+end.

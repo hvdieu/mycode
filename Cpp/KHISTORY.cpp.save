@@ -1,0 +1,116 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+typedef pair<int, int> ii;
+typedef pair<long long, int> lli;
+
+#define For(i,a,b) for(int i=a;i<=b;i++)
+#define Ford(i,a,b) for(int i=a;i>=b;i--)
+#define fi first
+#define se second
+#define ll long long
+#define ld long double
+#define pb push_back
+#define reset(f,x) memset(f,x,sizeof(f))
+#define sz(s) int(s.size())
+#define 100010
+
+int n,m,low[N],num[N],top,st[N],lab[N],timer,cha[N],cnt,f[N][3],g[0];
+vector<int> ke[N],ke2[N];
+bool fr[N];
+
+void dfs(int u) {
+    num[u] = ++timer; low[u] = num[u];
+    st[++top] = u;
+    int v;
+    For(j,0,sz(ke[u])-1) {
+        v = ke[u][j];
+        if (fr[v]) {
+            if (!num[v]) {
+                dfs(v);
+                low[u] = min(low[u],low[v]);
+            } else if (cha[v] != u && cha[v] != u) low[u] = min(low[u],num[v]);
+        }
+    }
+    if (low[u] == num[u]) {
+        lab[u] = ++cnt;
+        do {
+            v = st[top--]; lab[v] = cnt;
+            fr[v] = false;
+        } while (u != v)
+    }
+}
+
+void build() {
+    For(i,1,n) For(u,0,sz(ke[u])-1) {
+        int u = lab[i], v = lab[ke[i][j]];
+        if (u != v) {
+            ke2[u].pb(v); ke2[v].pb(u);
+        }
+    }
+    n = cnt;
+}
+
+void visit(int u) {
+    int m0 = 0,m1 = 0, v; fr[u] = false;
+    For(j,0,sz(ke2[u])-1) {
+        v = ke2[u][j];
+        if (!cha[v]) {
+            cha[v] = u;
+            visit(v);
+            m0 += f[v][2];
+            m1 += min(min(f[v][0],f[v][1]),f[v][2]);
+        }
+    }
+    f[u][0] = m0;
+    f[u][1] = m1;
+    f[u][2] = n+1;
+    top = 0;
+    For(j,0,sz(ke2[u])-1) {
+        v = ke2[u][j];
+        if (cha[v] == u) st[++top] = v;
+    }
+    g[0] = 0;
+    v = st[1];
+    g[1] = min(min(f[v][0],f[v][1]),f[v][2]);
+    For(j,2,top) {
+        v = st[j];
+        g[j] = min(g[j-1],min(min(f[v][0],f[v][1]),f[v][2]));
+    }
+    int m1 = 0;
+    Rep(j,top,1) {
+        int v = st[j];
+        f[u][2] = min(f[u][2],m1 + g[j-1] + f[v][1]);
+        if (j == top) m1 = min()
+    }
+}
+
+void solve() {
+    reset(fr,true);
+    For(i,1,n) if (!num[i]) {
+        cha[i] = i;
+        top = 0;
+        dfs(i);
+    }
+    build();
+    reset(cha,0);
+    For(i,1,n) if (!cha[i]) {
+        cha[i] = i;
+        visit(i);
+        res += min(f[i][2],f[i][1]);
+    }
+}
+
+int main() {
+    freopen("khistory.inp","r",stdin);
+    freopen("khistory.out","w",stdout);
+    scanf("%d%d",&n,&m);
+    For(i,1,m) {
+        int u,v;
+        scanf("%d%d",&u,&v);
+        ke[u].pb(v); ke[v].pb(u);
+    }
+    solve();
+}
+
+

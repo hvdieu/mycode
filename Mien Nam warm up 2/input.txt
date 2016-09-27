@@ -1,0 +1,5 @@
+4
+1 a a
+3 hcmus hcipomsu
+3 problems prsblemio
+2 acmicpc acmicpc

@@ -1,0 +1,3 @@
+Uses math;
+Const
+	inp = ''
